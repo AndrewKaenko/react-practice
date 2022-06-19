@@ -29,6 +29,10 @@ const Button = styled.button`
   }
 `;
 
+const Error = styled.p`
+  color: red;
+`;
+
 interface FormData {
   email: string;
   username: string;
@@ -51,31 +55,53 @@ const FormContainer1 = () => {
   const [errorPhone, setErrorPhone] = useState<string>("");
   const [errorAge, setErrorAge] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorValidation, setErrorValidation] = useState<string>("");
+  const [uniqueEmeil, setUniqueEmail] = useState(true);
+
+  const arrEmailUnique = ["admin@test.com", "hacker@anonim.us"];
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
-    return console.log(data);
+    if (
+      errorEmail ||
+      errorUsername ||
+      errorPhone ||
+      errorAge ||
+      errorMessage ||
+      !uniqueEmeil
+    ) {
+      setErrorValidation("Fields filled out incorrectly");
+    } else {
+      setErrorValidation("");
+      return console.log(data);
+    }
   };
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     const regExp =
       /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     setData({ ...data, email: event.target.value });
-    if (!regExp.test(data.email)) {
-      setErrorEmail("Incorrect email");
+    if (
+      !regExp.test(data.email) ||
+      arrEmailUnique.includes(event.target.value)
+    ) {
+      setUniqueEmail(false);
+      setErrorEmail("Incorrect email or email is not unique");
     } else {
       setErrorEmail("");
+      setErrorValidation("");
+      setUniqueEmail(true);
     }
   };
 
   const onChangeUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const regExp = /(?!.*[\.\-\_]{5,})^[a-z\.\-\_]{5,30}$/;
+    const regExp = /(?!.*[.\-_]{5,})^[a-z.\-_]{5,30}$/;
     setData({ ...data, username: event.target.value });
     if (!regExp.test(event.target.value)) {
       setErrorUsername("Incorrect username");
     } else {
       setErrorUsername("");
+      setErrorValidation("");
     }
   };
 
@@ -86,6 +112,7 @@ const FormContainer1 = () => {
       setErrorPhone("Incorrect phone number");
     } else {
       setErrorPhone("");
+      setErrorValidation("");
     }
   };
 
@@ -93,22 +120,27 @@ const FormContainer1 = () => {
     const regExp = /^\d{1,3}$/;
     setData({ ...data, age: event.target.value });
     if (
-      !regExp.test(event.target.value) &&
-      Number(event.target.value) >= 18 &&
-      Number(event.target.value) <= 122
+      !regExp.test(event.target.value) ||
+      Number(event.target.value) <= 17 ||
+      Number(event.target.value) >= 123
     ) {
       setErrorAge("Incorrect age");
     } else {
       setErrorAge("");
+      setErrorValidation("");
     }
   };
 
   const onChangeMessage = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setData({ ...data, message: event.target.value });
-    if (event.target.value.length >= 100 && event.target.value.length <= 1000) {
+    if (
+      Number(event.target.value.length) <= 100 ||
+      Number(event.target.value.length) >= 1000
+    ) {
       setErrorMessage("Incorrect message");
     } else {
       setErrorMessage("");
+      setErrorValidation("");
     }
   };
 
@@ -124,6 +156,7 @@ const FormContainer1 = () => {
           placeholder="name@mail.com"
           required
         />
+        {errorEmail ? <Error>{errorEmail}</Error> : null}
       </Group>
       <Group>
         <label htmlFor="username">username*</label>
@@ -137,18 +170,18 @@ const FormContainer1 = () => {
           placeholder="user_name"
           required
         />
+        {errorUsername ? <Error>{errorUsername}</Error> : null}
       </Group>
       <Group>
         <label htmlFor="phoneNumber">phone number</label>
         <input
           value={data.phoneNumber}
           onChange={onChangePhone}
-          min={18}
-          max={122}
           id="phoneNumber"
           type="phone"
           placeholder="+380123456789"
         />
+        {errorPhone ? <Error>{errorPhone}</Error> : null}
       </Group>
       <Group>
         <label htmlFor="age">years old</label>
@@ -157,8 +190,10 @@ const FormContainer1 = () => {
           onChange={onChangeAge}
           id="age"
           type="number"
+          min={1}
           placeholder="25"
         />
+        {errorAge ? <Error>{errorAge}</Error> : null}
       </Group>
       <Group>
         <label htmlFor="message">message*</label>
@@ -170,8 +205,10 @@ const FormContainer1 = () => {
           placeholder="one more thing..."
           required
         />
+        {errorMessage ? <Error>{errorMessage}</Error> : null}
       </Group>
       <Button type="submit">SEND</Button>
+      {errorValidation ? <Error>{errorValidation}</Error> : null}
     </Form>
   );
 };
