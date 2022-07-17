@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const Form = styled.form`
+export const Form = styled.form`
   background-color: #fff;
-  width: 30%;
+  width: 300px;
   border: solid 2px rgba(4, 6, 135, 0.8);
   border-radius: 5px;
   padding: 20px 15px;
 `;
 
-const Group = styled.fieldset`
+export const Group = styled.fieldset`
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
 `;
 
-const Button = styled.button`
+export const Button = styled.button`
   background-color: rgba(4, 6, 135, 0.8);
   color: #fff;
   font-size: 16px;
@@ -29,7 +29,7 @@ const Button = styled.button`
   }
 `;
 
-const Error = styled.p`
+export const Error = styled.p`
   color: red;
 `;
 
